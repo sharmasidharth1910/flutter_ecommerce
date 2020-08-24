@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce/pages/login_page.dart';
 import 'package:flutter_ecommerce/pages/register_page.dart';
 
 void main() {
@@ -9,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter E-Commerce',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
@@ -30,6 +31,9 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: RegisterPage(),
+      routes: {
+        "/login": (context) => LoginPage(),
+      },
     );
   }
 }

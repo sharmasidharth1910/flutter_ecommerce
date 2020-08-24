@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class RegisterPage extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
-  String _username, _password, _email;
+  String _password, _email;
 
   void _submit() {
     if (_formKey.currentState.validate()) {
@@ -16,7 +16,6 @@ class _RegisterPageState extends State<RegisterPage> {
       print("Form valid");
       print(_email);
       print(_password);
-      print(_username);
     } else {
       print("Form invalid");
     }
@@ -27,7 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "REGISTER",
+          "LOGIN",
           style: TextStyle(
             fontWeight: FontWeight.w600,
           ),
@@ -45,38 +44,8 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Column(
                 children: [
                   Text(
-                    "Register",
+                    "Login",
                     style: Theme.of(context).textTheme.headline1,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 20.0),
-                    child: TextFormField(
-                      onSaved: (value) => _username = value,
-                      validator: (value) {
-                        if (value.trim().length < 6) {
-                          return "Username too short";
-                        } else {
-                          return null;
-                        }
-                      },
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).accentColor,
-                          ),
-                        ),
-                        labelText: "UserName",
-                        labelStyle: TextStyle(
-                          fontSize: 18.0,
-                          // color: Theme.of(context).accentColor,
-                        ),
-                        hintText: "Enter username, min length 6",
-                        icon: Icon(
-                          Icons.face,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 20.0),
@@ -163,14 +132,12 @@ class _RegisterPageState extends State<RegisterPage> {
                               Radius.circular(10.0),
                             ),
                           ),
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).accentColor,
                         ),
                         FlatButton(
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(context, "/login");
-                          },
+                          onPressed: () {},
                           child: Text(
-                            'Existing user? Login',
+                            'New user? Register',
                           ),
                         ),
                       ],
