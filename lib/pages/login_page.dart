@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce/pages/register_page.dart';
 
 class LoginPage extends StatefulWidget {
+  static const id = "LoginPage";
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -9,6 +12,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   String _password, _email;
+  bool _obscureText = true;
 
   void _submit() {
     if (_formKey.currentState.validate()) {
@@ -80,6 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: EdgeInsets.only(top: 20.0),
                     child: TextFormField(
+                      obscureText: _obscureText,
                       onSaved: (value) => _password = value,
                       validator: (value) {
                         if (value.trim().length < 6) {
@@ -89,6 +94,18 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       },
                       decoration: InputDecoration(
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
+                          child: Icon(
+                            _obscureText
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                        ),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Theme.of(context).accentColor,
@@ -135,7 +152,10 @@ class _LoginPageState extends State<LoginPage> {
                           color: Theme.of(context).accentColor,
                         ),
                         FlatButton(
-                          onPressed: () {},
+                          onPressed: () => Navigator.pushReplacementNamed(
+                            context,
+                            RegisterPage.id,
+                          ),
                           child: Text(
                             'New user? Register',
                           ),

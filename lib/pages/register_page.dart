@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce/pages/login_page.dart';
 
 class RegisterPage extends StatefulWidget {
+  static const id = "RegisterPage";
+
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
@@ -9,6 +12,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
   String _username, _password, _email;
+  bool _obscureText = true;
 
   void _submit() {
     if (_formKey.currentState.validate()) {
@@ -111,6 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   Padding(
                     padding: EdgeInsets.only(top: 20.0),
                     child: TextFormField(
+                      obscureText: _obscureText,
                       onSaved: (value) => _password = value,
                       validator: (value) {
                         if (value.trim().length < 6) {
@@ -120,6 +125,18 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                       },
                       decoration: InputDecoration(
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
+                          child: Icon(
+                            _obscureText
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                        ),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Theme.of(context).accentColor,
@@ -166,9 +183,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           color: Theme.of(context).primaryColor,
                         ),
                         FlatButton(
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(context, "/login");
-                          },
+                          onPressed: () => Navigator.pushReplacementNamed(
+                            context,
+                            LoginPage.id,
+                          ),
                           child: Text(
                             'Existing user? Login',
                           ),

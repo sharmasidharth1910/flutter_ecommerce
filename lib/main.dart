@@ -32,7 +32,9 @@ class MyApp extends StatelessWidget {
       ),
       home: RegisterPage(),
       routes: {
-        "/login": (context) => LoginPage(),
+        // "/login": (context) => LoginPage(),
+        LoginPage.id: (context) => LoginPage(),
+        RegisterPage.id: (context) => RegisterPage(),
       },
     );
   }
