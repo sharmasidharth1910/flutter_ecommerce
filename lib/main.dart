@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           // ),
         ),
       ),
-      home: RegisterPage(),
+      home: ProductsPage(),
       routes: {
         ProductsPage.id: (context) => ProductsPage(),
         LoginPage.id: (context) => LoginPage(),

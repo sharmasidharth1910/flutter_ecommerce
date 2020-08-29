@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'package:flutter_ecommerce/pages/products_page.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce/pages/register_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   static const id = "LoginPage";
@@ -10,24 +14,89 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String _password, _email;
   bool _obscureText = true;
+  bool isLoading = false;
+
+  void _registerUser() async {
+    setState(() {
+      isLoading = true;
+    });
+    http.Response response = await http.post(
+      "http://10.0.2.2:1337/auth/local/",
+      body: {
+        "identifier": _email,
+        "password": _password,
+      },
+    );
+    final responseData = json.decode(response.body);
+    setState(() {
+      isLoading = false;
+    });
+    print("Data from http request: $responseData");
+    if (response.statusCode == 200) {
+      _saveUserData(responseData);
+      _showSuccessSnackBar();
+    } else {
+      final errorMsg = responseData['message'][0]['messages'][0]['message'];
+      _showErrorSnackBar(errorMsg);
+    }
+  }
+
+  void _saveUserData(responseData) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic> user = responseData['user'];
+    user.putIfAbsent("jwt", () => responseData['jwt']);
+    prefs.setString('user', json.encode(user));
+  }
+
+  void _showErrorSnackBar(String errorMsg) {
+    final SnackBar snackBar = SnackBar(
+      content: Text(
+        "$errorMsg",
+        style: TextStyle(
+          color: Colors.black,
+        ),
+      ),
+      backgroundColor: Theme.of(context).accentColor,
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+    print("Error: $errorMsg");
+  }
+
+  void _showSuccessSnackBar() {
+    final SnackBar snackBar = SnackBar(
+      content: Text(
+        "User logged in successfully",
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
+      backgroundColor: Theme.of(context).accentColor,
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+    _formKey.currentState.reset();
+    Future.delayed(Duration(seconds: 2), () {
+      Navigator.pushReplacementNamed(
+        context,
+        ProductsPage.id,
+      );
+    });
+  }
 
   void _submit() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      print("Form valid");
-      print(_email);
-      print(_password);
-    } else {
-      print("Form invalid");
+      _registerUser();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           "LOGIN",
@@ -130,27 +199,32 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     child: Column(
                       children: [
-                        RaisedButton(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.0,
-                            vertical: 15.0,
-                          ),
-                          onPressed: _submit,
-                          child: Text(
-                            "Submit",
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: Colors.black,
-                            ),
-                          ),
-                          elevation: 8.0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10.0),
-                            ),
-                          ),
-                          color: Theme.of(context).accentColor,
-                        ),
+                        isLoading
+                            ? CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation(
+                                    Theme.of(context).accentColor),
+                              )
+                            : RaisedButton(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 20.0,
+                                  vertical: 15.0,
+                                ),
+                                onPressed: _submit,
+                                child: Text(
+                                  "Submit",
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                elevation: 8.0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10.0),
+                                  ),
+                                ),
+                                color: Theme.of(context).accentColor,
+                              ),
                         FlatButton(
                           onPressed: () => Navigator.pushReplacementNamed(
                             context,

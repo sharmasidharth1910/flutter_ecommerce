@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce/pages/login_page.dart';
 import 'package:flutter_ecommerce/pages/products_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   static const id = "RegisterPage";
@@ -38,11 +39,19 @@ class _RegisterPageState extends State<RegisterPage> {
     });
     print("Data from http request: $responseData");
     if (response.statusCode == 200) {
+      _saveUserData(responseData);
       _showSuccessSnackBar();
     } else {
-      final errorMsg = responseData['message'];
+      final errorMsg = responseData['message'][0]['messages'][0]['message'];
       _showErrorSnackBar(errorMsg);
     }
+  }
+
+  void _saveUserData(responseData) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic> user = responseData['user'];
+    user.putIfAbsent("jwt", () => responseData['jwt']);
+    prefs.setString('user', json.encode(user));
   }
 
   void _showErrorSnackBar(String errorMsg) {
@@ -50,7 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
       content: Text(
         "$errorMsg",
         style: TextStyle(
-          color: Colors.red,
+          color: Colors.black,
         ),
       ),
       backgroundColor: Theme.of(context).accentColor,
