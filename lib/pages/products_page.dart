@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce/models/app_state.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -22,14 +21,32 @@ class _ProductsPageState extends State<ProductsPage> {
     widget.onInit();
   }
 
+  AppBar _appBar() {
+    return AppBar(
+      title: Text("Products"),
+      centerTitle: true,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, AppState>(
       converter: (store) => store.state,
       builder: (context, state) {
-        return SingleChildScrollView(
-          child: Text(
-            json.encode(state.user),
+        return Scaffold(
+          appBar: _appBar(),
+          body: SingleChildScrollView(
+            child: state.user != null
+                ? Text(
+                    state.user.username +
+                        "  " +
+                        state.user.jwt +
+                        "  " +
+                        state.user.email,
+                  )
+                : Text(
+                    "No Data",
+                  ),
           ),
         );
       },
