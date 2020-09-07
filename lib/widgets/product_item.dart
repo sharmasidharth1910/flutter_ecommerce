@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce/models/app_state.dart';
 import 'package:flutter_ecommerce/models/product.dart';
 import 'package:flutter_ecommerce/pages/products_detail_page.dart';
+import 'package:flutter_ecommerce/redux/actions.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class ProductItem extends StatelessWidget {
@@ -49,7 +50,10 @@ class ProductItem extends StatelessWidget {
                   ? IconButton(
                       icon: Icon(Icons.shopping_cart),
                       color: Colors.white,
-                      onPressed: () {},
+                      onPressed: () {
+                        StoreProvider.of<AppState>(context)
+                            .dispatch(toggleCartProductAction(item));
+                      },
                     )
                   : Text("");
             },

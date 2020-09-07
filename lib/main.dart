@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce/models/app_state.dart';
+import 'package:flutter_ecommerce/pages/cart_page.dart';
 import 'package:flutter_ecommerce/pages/login_page.dart';
 import 'package:flutter_ecommerce/pages/products_page.dart';
 import 'package:flutter_ecommerce/pages/register_page.dart';
@@ -45,18 +46,17 @@ class MyApp extends StatelessWidget {
               fontSize: 72.0,
               fontWeight: FontWeight.bold,
             ),
-            subtitle1: TextStyle(
-              fontSize: 36.0,
-              fontStyle: FontStyle.italic,
-            ),
-            bodyText1: TextStyle(
-              fontSize: 18.0,
-            ),
+            // subtitle1: TextStyle(
+            //   fontSize: 36.0,
+            //   fontStyle: FontStyle.italic,
+            // ),
+            // bodyText1: TextStyle(
+            //   fontSize: 18.0,
+            // ),
           ),
         ),
-        home: LoginPage(),
         routes: {
-          ProductsPage.id: (context) => ProductsPage(
+          '/': (context) => ProductsPage(
                 onInit: () {
                   // dispatch an action (UserAction) to grab user data
                   StoreProvider.of<AppState>(context).dispatch(getUserAction);
@@ -66,6 +66,7 @@ class MyApp extends StatelessWidget {
               ),
           LoginPage.id: (context) => LoginPage(),
           RegisterPage.id: (context) => RegisterPage(),
+          CartPage.id: (context) => CartPage(),
         },
       ),
     );
