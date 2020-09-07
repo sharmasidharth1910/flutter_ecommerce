@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce/models/app_state.dart';
+import 'package:flutter_ecommerce/pages/cart_page.dart';
+import 'package:flutter_ecommerce/pages/register_page.dart';
+import 'package:flutter_ecommerce/redux/actions.dart';
 import 'package:flutter_ecommerce/widgets/product_item.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -49,24 +52,47 @@ class _ProductsPageState extends State<ProductsPage> {
       builder: (context, state) {
         return AppBar(
           title: SizedBox(
-            child: state.user != null ? Text(state.user.username) : Text(""),
+            child: state.user != null
+                ? Text(state.user.username)
+                : FlatButton(
+                    onPressed: () => Navigator.pushNamed(
+                      context,
+                      RegisterPage.id,
+                    ),
+                    child: Text(
+                      "Register Here",
+                      style: TextStyle(
+                        fontSize: 18.0,
+                      ),
+                    ),
+                  ),
           ),
           centerTitle: true,
-          leading: IconButton(
-            icon: Icon(
-              Icons.store,
-            ),
-            onPressed: () {},
-          ),
+          leading: state.user != null
+              ? IconButton(
+                  icon: Icon(
+                    Icons.store,
+                  ),
+                  onPressed: () => Navigator.pushNamed(
+                    context,
+                    CartPage.id,
+                  ),
+                )
+              : Text(""),
           actions: [
-            state.user != null
-                ? IconButton(
-                    icon: Icon(
-                      Icons.exit_to_app,
-                    ),
-                    onPressed: () {},
-                  )
-                : Text(''),
+            StoreConnector<AppState, VoidCallback>(
+              converter: (store) {
+                return () => store.dispatch(logoutUserAction);
+              },
+              builder: (_, callback) {
+                return state.user != null
+                    ? IconButton(
+                        icon: Icon(Icons.exit_to_app),
+                        onPressed: callback,
+                      )
+                    : Text("");
+              },
+            ),
           ],
         );
       },
