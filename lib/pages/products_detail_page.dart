@@ -38,11 +38,16 @@ class ProductsDetailPage extends StatelessWidget {
             ),
             Text(
               item.name,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: TextStyle(
+                fontSize: 36.0,
+                fontStyle: FontStyle.italic,
+              ),
             ),
             Text(
               "\$" + item.price.toString(),
-              style: Theme.of(context).textTheme.bodyText1,
+              style: TextStyle(
+                fontSize: 18.0,
+              ),
             ),
             Flexible(
               child: SingleChildScrollView(
