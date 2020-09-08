@@ -36,6 +36,10 @@
       "plugin": "users-permissions",
       "model": "user",
       "via": "products"
+    },
+    "carts": {
+      "via": "products",
+      "collection": "cart"
     }
   }
 }
