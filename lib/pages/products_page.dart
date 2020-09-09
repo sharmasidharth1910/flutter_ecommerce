@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce/models/app_state.dart';
 import 'package:flutter_ecommerce/pages/cart_page.dart';
@@ -69,13 +70,25 @@ class _ProductsPageState extends State<ProductsPage> {
           ),
           centerTitle: true,
           leading: state.user != null
-              ? IconButton(
-                  icon: Icon(
-                    Icons.store,
-                  ),
-                  onPressed: () => Navigator.pushNamed(
-                    context,
-                    CartPage.id,
+              ? Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Badge(
+                    badgeContent: Text(
+                      "${state.cartProducts.length}",
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                    badgeColor: Colors.lime,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.store,
+                      ),
+                      onPressed: () => Navigator.pushNamed(
+                        context,
+                        CartPage.id,
+                      ),
+                    ),
                   ),
                 )
               : Text(""),
