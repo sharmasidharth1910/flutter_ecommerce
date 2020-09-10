@@ -19,28 +19,73 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _obscureText = true;
   bool isLoading = false;
 
+  // void _registerUser() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   final cart = await http.post("http://10.0.2.2:1337/carts");
+  //   http.Response response = await http.post(
+  //     "http://10.0.2.2:1337/auth/local/register",
+  //     body: {
+  // "username": _username,
+  // "password": _password,
+  // "email": _email,
+  //     },
+  //   );
+  //   final responseData = json.decode(response.body);
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  //   print("Data from http request: $responseData");
+  //   if (response.statusCode == 200) {
+  //     // model.set('cart_id', cart.data.id);
+  //     _saveUserData(responseData);
+  //     _showSuccessSnackBar();
+  //   } else {
+  //     final errorMsg = responseData['message'][0]['messages'][0]['message'];
+  //     _showErrorSnackBar(errorMsg);
+  //   }
+  // }
+
   void _registerUser() async {
-    setState(() {
-      isLoading = true;
-    });
-    http.Response response = await http.post(
-      "http://10.0.2.2:1337/auth/local/register",
-      body: {
-        "username": _username,
-        "password": _password,
-        "email": _email,
-      },
+    setState(
+      () => isLoading = true,
     );
-    final responseData = json.decode(response.body);
-    setState(() {
-      isLoading = false;
-    });
-    print("Data from http request: $responseData");
-    if (response.statusCode == 200) {
-      _saveUserData(responseData);
-      _showSuccessSnackBar();
+
+    // create a new cart
+    var cartResponse = await http.post('http://10.0.2.2:1337/carts');
+    final cartData = json.decode(cartResponse.body);
+    if (cartResponse.statusCode == 200) {
+      print('new cart responseData: $cartData');
+      final cartId = cartData['id'].toString();
+
+      // create a new user
+      var response = await http.post('http://10.0.2.2:1337/auth/local/register',
+          body: {
+            "username": _username,
+            "password": _password,
+            "email": _email,
+            "cart_id": cartId
+          });
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        setState(() => isLoading = false);
+        _saveUserData(responseData);
+        _showSuccessSnackBar();
+        print('new user responseData: $responseData');
+      } else {
+        // because creating a user failed, delete the cart
+        await http.delete('http://10.0.2.2:1337/carts/$cartId');
+
+        setState(() => isLoading = false);
+        final String errorMsg =
+            responseData['message'][0]['messages'][0]['message'];
+        _showErrorSnackBar(errorMsg);
+      }
     } else {
-      final errorMsg = responseData['message'][0]['messages'][0]['message'];
+      setState(() => isLoading = false);
+      final String errorMsg = cartData['message'];
       _showErrorSnackBar(errorMsg);
     }
   }
