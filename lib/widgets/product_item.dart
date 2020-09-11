@@ -58,6 +58,7 @@ class ProductItem extends StatelessWidget {
                           ? Colors.cyan[700]
                           : Colors.white,
                       onPressed: () {
+                        print("Button Pressed");
                         StoreProvider.of<AppState>(context).dispatch(
                           toggleCartProductAction(item),
                         );
