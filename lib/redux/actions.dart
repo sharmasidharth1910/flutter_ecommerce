@@ -68,8 +68,9 @@ class GetProductsAction {
 // Cart Products Actions
 
 ThunkAction<AppState> toggleCartProductAction(Product cartProduct) {
-  return (Store<AppState> store) {
+  return (Store<AppState> store) async {
     final List<Product> cartProducts = store.state.cartProducts;
+    final User user = store.state.user;
     final int index =
         cartProducts.indexWhere((element) => element.id == cartProduct.id);
     bool isInCart = index > -1 == true;
@@ -79,8 +80,51 @@ ThunkAction<AppState> toggleCartProductAction(Product cartProduct) {
     } else {
       updatedCartProducts.add(cartProduct);
     }
+    print("Button 2 Pressed");
+    final List<String> cartProductsIds =
+        updatedCartProducts.map((product) => product.id).toList();
+    final http.Response result = await http.put(
+      "http://10.0.2.2:1337/carts/${user.cartId}",
+      body: json.encode({
+        "products": cartProductsIds,
+      }),
+      headers: {
+        "Authorization": "Bearer ${user.jwt}",
+      },
+    );
+    print("Result of cartPut : ${json.decode(result.body)}");
     store.dispatch(ToggleCartProductAction(updatedCartProducts));
   };
+}
+
+ThunkAction<AppState> getCartProductsAction = (Store<AppState> store) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String storedUser = prefs.getString('user');
+  if (storedUser == null) {
+    return;
+  }
+  final User user = User.fromJson(json.decode(storedUser));
+  final http.Response response = await http.get(
+    "http://10.0.2.2:1337/carts/${user.cartId}",
+    headers: {
+      "Authorization": "Bearer ${user.jwt}",
+    },
+  );
+  final responseData = json.decode(response.body)['products'];
+  final List<Product> cartProducts = [];
+  responseData.forEach((productData) {
+    final Product product = Product.fromJson(productData);
+    cartProducts.add(product);
+  });
+  store.dispatch(GetCartProductsAction(cartProducts));
+};
+
+class GetCartProductsAction {
+  final List<Product> _cartProducts;
+
+  List<Product> get cartProducts => this._cartProducts;
+
+  GetCartProductsAction(this._cartProducts);
 }
 
 class ToggleCartProductAction {
