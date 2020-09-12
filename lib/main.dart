@@ -68,7 +68,11 @@ class MyApp extends StatelessWidget {
               ),
           LoginPage.id: (context) => LoginPage(),
           RegisterPage.id: (context) => RegisterPage(),
-          CartPage.id: (context) => CartPage(),
+          CartPage.id: (context) => CartPage(
+                onInit: () {
+                  StoreProvider.of<AppState>(context).dispatch(getCardsAction);
+                },
+              ),
         },
       ),
     );
