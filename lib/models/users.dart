@@ -6,6 +6,7 @@ class User {
   String id;
   String jwt;
   String cartId;
+  String customerId;
 
   User({
     @required this.email,
@@ -13,6 +14,7 @@ class User {
     @required this.jwt,
     @required this.username,
     @required this.cartId,
+    @required this.customerId,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,7 @@ class User {
       username: json['username'],
       email: json['email'],
       jwt: json['jwt'],
+      customerId: json['customer_id'],
     );
   }
 }
