@@ -33,6 +33,8 @@ dependencies:
   redux_thunk: ^0.3.0
   redux_logging: ^0.4.0
   badges: ^1.1.1  
+  stripe_payment: ^1.0.7
+  flutter_credit_card: ^0.1.3
 
 dev_dependencies:
   flutter_test:
