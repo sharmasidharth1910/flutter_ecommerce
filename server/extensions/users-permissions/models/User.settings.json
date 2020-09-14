@@ -54,8 +54,21 @@
       "configurable": false
     },
     "products": {
+      "collection": "product",
+      "via": "user"
+    },
+    "cart_id": {
+      "type": "string"
+    },
+    "customer_id": {
+      "type": "string"
+    },
+    "card_token": {
+      "type": "string"
+    },
+    "orders": {
       "via": "user",
-      "collection": "product"
+      "collection": "order"
     }
   }
 }

@@ -11,15 +11,18 @@
   },
   "devDependencies": {},
   "dependencies": {
+    "axios": "latest",
+    "slugify": "^1.4.5",
+    "stripe": "latest",
     "strapi": "3.1.0-alpha.5",
     "strapi-admin": "3.1.0-alpha.5",
-    "strapi-utils": "3.1.0-alpha.5",
-    "strapi-plugin-content-type-builder": "3.1.0-alpha.5",
+    "strapi-connector-mongoose": "3.1.0-alpha.5",
     "strapi-plugin-content-manager": "3.1.0-alpha.5",
-    "strapi-plugin-users-permissions": "3.1.0-alpha.5",
+    "strapi-plugin-content-type-builder": "3.1.0-alpha.5",
     "strapi-plugin-email": "3.1.0-alpha.5",
     "strapi-plugin-upload": "3.1.0-alpha.5",
-    "strapi-connector-mongoose": "3.1.0-alpha.5"
+    "strapi-plugin-users-permissions": "3.1.0-alpha.5",
+    "strapi-utils": "3.1.0-alpha.5"
   },
   "author": {
     "name": "A Strapi developer"
