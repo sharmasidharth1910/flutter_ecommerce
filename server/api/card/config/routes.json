@@ -1,0 +1,14 @@
+{
+    "routes": [
+        {
+            "path": "/card",
+            "handler": "card.index",
+            "method": "GET"
+        },
+        {
+            "path": "/card/add",
+            "handler": "card.add",
+            "method": "POST"
+        }
+    ]
+}
