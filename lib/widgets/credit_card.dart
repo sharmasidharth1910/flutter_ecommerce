@@ -65,7 +65,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                 final token = await StripePayment.createTokenWithCard(testCard);
                 Navigator.pop(
                   context,
-                  token.tokenId,
+                  [token.tokenId, token.card.cardId],
                 );
               },
               child: Text(
