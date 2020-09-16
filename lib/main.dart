@@ -71,6 +71,8 @@ class MyApp extends StatelessWidget {
           CartPage.id: (context) => CartPage(
                 onInit: () {
                   StoreProvider.of<AppState>(context).dispatch(getCardsAction);
+                  StoreProvider.of<AppState>(context)
+                      .dispatch(getCardTokenAction);
                 },
               ),
         },
