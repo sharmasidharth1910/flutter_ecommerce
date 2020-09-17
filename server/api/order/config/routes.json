@@ -2,7 +2,7 @@
   "routes": [
     {
       "method": "GET",
-      "path": "/orders",
+      "path": "",
       "handler": "order.find",
       "config": {
         "policies": []
@@ -10,7 +10,7 @@
     },
     {
       "method": "GET",
-      "path": "/orders/count",
+      "path": "/count",
       "handler": "order.count",
       "config": {
         "policies": []
@@ -18,7 +18,7 @@
     },
     {
       "method": "GET",
-      "path": "/orders/:id",
+      "path": "/:id",
       "handler": "order.findOne",
       "config": {
         "policies": []
@@ -26,7 +26,7 @@
     },
     {
       "method": "POST",
-      "path": "/orders",
+      "path": "",
       "handler": "order.create",
       "config": {
         "policies": []
@@ -34,7 +34,7 @@
     },
     {
       "method": "PUT",
-      "path": "/orders/:id",
+      "path": "/:id",
       "handler": "order.update",
       "config": {
         "policies": []
@@ -42,7 +42,7 @@
     },
     {
       "method": "DELETE",
-      "path": "/orders/:id",
+      "path": "/:id",
       "handler": "order.delete",
       "config": {
         "policies": []
