@@ -56,17 +56,31 @@ class _RegisterPageState extends State<RegisterPage> {
     var cartResponse = await http.post('http://10.0.2.2:1337/carts');
     final cartData = json.decode(cartResponse.body);
     if (cartResponse.statusCode == 200) {
+      final http.Response result = await http.post(
+        "https://api.stripe.com/v1/customers",
+        headers: {
+          "Authorization":
+              "Bearer sk_test_51HQQNzAHq1q1hh4yKWHe7O3aw8R2oZGAmgC3qJdaFeHPOgdZ4K2PLihXV2h4PDzJVxbovkajcVJw1ZkbvdOI8XJ300vNw0Vaxe",
+        },
+        body: {
+          "email": _email,
+        },
+      );
+
+      print(json.decode(result.body)["id"]);
+
       print('new cart responseData: $cartData');
       final cartId = cartData['id'].toString();
 
       // create a new user
-      var response = await http.post('http://10.0.2.2:1337/auth/local/register',
-          body: {
-            "username": _username,
-            "password": _password,
-            "email": _email,
-            "cart_id": cartId
-          });
+      var response =
+          await http.post('http://10.0.2.2:1337/auth/local/register', body: {
+        "username": _username,
+        "password": _password,
+        "email": _email,
+        "cart_id": cartId,
+        "customer_id": json.decode(result.body)["id"],
+      });
       final responseData = json.decode(response.body);
 
       if (response.statusCode == 200) {
@@ -76,6 +90,13 @@ class _RegisterPageState extends State<RegisterPage> {
         print('new user responseData: $responseData');
       } else {
         // because creating a user failed, delete the cart
+        await http.delete(
+          "https://api.stripe.com/v1/customers/${json.decode(result.body)["id"]}",
+          headers: {
+            "Authorization":
+                "Bearer sk_test_51HQQNzAHq1q1hh4yKWHe7O3aw8R2oZGAmgC3qJdaFeHPOgdZ4K2PLihXV2h4PDzJVxbovkajcVJw1ZkbvdOI8XJ300vNw0Vaxe",
+          },
+        );
         await http.delete('http://10.0.2.2:1337/carts/$cartId');
 
         setState(() => isLoading = false);
