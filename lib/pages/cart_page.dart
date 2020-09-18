@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce/models/app_state.dart';
+import 'package:flutter_ecommerce/models/order.dart';
 import 'package:flutter_ecommerce/models/users.dart';
 import 'package:flutter_ecommerce/widgets/credit_card.dart';
 import 'package:flutter_ecommerce/widgets/product_item.dart';
@@ -188,7 +189,41 @@ class _CartPageState extends State<CartPage> {
   }
 
   Widget _ordersTab(state) {
-    return Text("Orders");
+    return ListView(
+      children: state.orders.length > 0
+          ? state.orders
+              .map<Widget>((order) => ListTile(
+                    title: Text("\$${order.amount}"),
+                    subtitle: Text(order.createdAt),
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.green,
+                      child: Icon(
+                        Icons.attach_money,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ))
+              .toList()
+          : [
+              Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.close,
+                      size: 60.0,
+                    ),
+                    Text(
+                      "No Orders Yet",
+                      style: Theme.of(context).textTheme.headline1,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+    );
   }
 
   String calculateTotalPrice(cartProducts) {
@@ -298,7 +333,8 @@ class _CartPageState extends State<CartPage> {
         }).then((value) async {
       _checkoutCartProducts() async {
         // Create new order in strapi
-        http.post("http://10.0.2.2:1337/orders", body: {
+        http.Response response =
+            await http.post("http://10.0.2.2:1337/orders", body: {
           "amount": calculateTotalPrice(state.cartProducts),
           "products": json.encode(state.cartProducts),
           "source": state.cardToken,
@@ -306,6 +342,8 @@ class _CartPageState extends State<CartPage> {
         }, headers: {
           "Authorization": "Bearer ${state.user.jwt}",
         });
+        final responseData = json.decode(response.body);
+        return responseData;
       }
 
       if (value == true) {
@@ -315,15 +353,43 @@ class _CartPageState extends State<CartPage> {
           _isSubmitting = true;
         });
         // Checkout cart products
-        await _checkoutCartProducts();
+        final newOrderData = await _checkoutCartProducts();
+        print(newOrderData.toString());
         // Create new order data in strapi
         // Make payment in stripe
         // Create order instance
+        Order newOrder = Order.fromJson(newOrderData);
         // Pass order instance to a new action (AddOrderAction)
+        StoreProvider.of<AppState>(context).dispatch(AddOrderAction(newOrder));
+        // Clear cart items
+        StoreProvider.of<AppState>(context).dispatch(clearCartProductsAction);
         // Hide loading spinner
+        setState(() {
+          _isSubmitting = false;
+        });
         // Show a success dialog
+        _showSuccessDialog();
       }
     });
+  }
+
+  Future _showSuccessDialog() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text("Success!"),
+            children: [
+              Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Text(
+                  "Order Successful \n\nCheck your email for a receipt of your purchase. \n\nOrder summary will appear on your orders tab.",
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ),
+            ],
+          );
+        });
   }
 
   @override
