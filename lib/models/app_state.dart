@@ -1,3 +1,4 @@
+import 'package:flutter_ecommerce/models/order.dart';
 import 'package:flutter_ecommerce/models/product.dart';
 import 'package:flutter_ecommerce/models/users.dart';
 import 'package:meta/meta.dart';
@@ -8,6 +9,7 @@ class AppState {
   final List<Product> products;
   final List<Product> cartProducts;
   final List<dynamic> cards;
+  final List<Order> orders;
   final String cardToken;
 
   AppState({
@@ -16,6 +18,7 @@ class AppState {
     @required this.cartProducts,
     @required this.cards,
     @required this.cardToken,
+    @required this.orders,
   });
 
   factory AppState.initial() {
@@ -25,6 +28,7 @@ class AppState {
       cartProducts: [],
       cards: [],
       cardToken: "",
+      orders: [],
     );
   }
 }
