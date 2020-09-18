@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_ecommerce/models/order.dart';
 import 'package:flutter_ecommerce/models/product.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_ecommerce/models/app_state.dart';
@@ -49,6 +50,7 @@ class GetUserAction {
 ThunkAction<AppState> getProductsAction = (Store<AppState> store) async {
   http.Response response = await http.get("http://10.0.2.2:1337/products");
   final List<dynamic> responseData = json.decode(response.body);
+  print("Products data: $responseData");
   List<Product> products = [];
   responseData.forEach((productData) {
     final Product product = Product.fromJson(productData);
@@ -119,6 +121,28 @@ ThunkAction<AppState> getCartProductsAction = (Store<AppState> store) async {
   store.dispatch(GetCartProductsAction(cartProducts));
 };
 
+ThunkAction<AppState> clearCartProductsAction = (Store<AppState> store) async {
+  final User user = store.state.user;
+  await http.put(
+    "http://10.0.2.2:1337/carts/${user.cartId}",
+    body: json.encode({
+      "products": [],
+    }),
+    headers: {
+      "Authorization": "Bearer ${user.jwt}",
+    },
+  );
+  store.dispatch(ClearCartProductsAction(List(0)));
+};
+
+class ClearCartProductsAction {
+  final List<Product> _cartProducts;
+
+  ClearCartProductsAction(this._cartProducts);
+
+  List<Product> get cartProducts => this._cartProducts;
+}
+
 class GetCartProductsAction {
   final List<Product> _cartProducts;
 
@@ -143,5 +167,81 @@ ThunkAction<AppState> getCardsAction = (Store<AppState> store) async {
   http.Response response =
       await http.get("http://10.0.2.2:1337/card?$customerId");
   final responseData = json.decode(response.body);
-  print(responseData);
+  store.dispatch(GetCardsAction(responseData));
 };
+
+class GetCardsAction {
+  final List<dynamic> _cards;
+
+  GetCardsAction(this._cards);
+
+  List<dynamic> get cards => this._cards;
+}
+
+class AddCardAction {
+  final dynamic _card;
+
+  AddCardAction(this._card);
+
+  dynamic get card => this._card;
+}
+
+// Card Token actions
+
+ThunkAction<AppState> getCardTokenAction = (Store<AppState> store) async {
+  final String jwt = store.state.user.jwt;
+  final http.Response response =
+      await http.get("http://10.0.2.2:1337/users/me", headers: {
+    "Authorization": "Bearer $jwt",
+  });
+  final responseData = json.decode(response.body);
+  print("Response from get user data: $responseData");
+  final http.Response response1 =
+      await http.get("http://10.0.2.2:1337/orders", headers: {
+    "Authorization": "Bearer $jwt",
+  });
+  final responseData1 = json.decode(response1.body);
+  List<Order> orders = [];
+  print("Response from get orders Data : $responseData1");
+  responseData['orders'].forEach((orderData) {
+    final Order order = Order.fromJson(orderData);
+    orders.add(order);
+  });
+  final String cardToken = responseData['card_token'];
+  store.dispatch(GetCardTokenAction(cardToken));
+  store.dispatch(GetOrdersAction(orders));
+};
+
+class GetOrdersAction {
+  final List<Order> _orders;
+
+  GetOrdersAction(this._orders);
+
+  List<Order> get orders => this._orders;
+}
+
+class UpdateCardTokenAction {
+  final String _cardToken;
+
+  String get cardToken => this._cardToken;
+
+  UpdateCardTokenAction(this._cardToken);
+}
+
+class GetCardTokenAction {
+  final String _cardToken;
+
+  String get cardToken => this._cardToken;
+
+  GetCardTokenAction(this._cardToken);
+}
+
+//Orders actions
+
+class AddOrderAction {
+  final Order _order;
+
+  AddOrderAction(this._order);
+
+  Order get order => this._order;
+}
